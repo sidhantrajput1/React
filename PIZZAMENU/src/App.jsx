@@ -1,4 +1,3 @@
-
 import "./App.css";
 
 const pizzaData = [
@@ -65,21 +64,37 @@ function Header() {
 }
 
 function Menu() {
+  const pizzas = pizzaData;
+
   return (
     <main className="menu">
       <h2>Our Menu</h2>
-      <ul className="pizzas">
-        {pizzaData.map((pizza, key) => (
-          <Pizza
-            key={key}
-            name={pizza.name}
-            ingredients={pizza.ingredients}
-            photoName={pizza.photoName}
-            price={pizza.price}
-            soldOut={pizza.soldOut}
-          />
-        ))}
-      </ul>
+
+      {
+        pizzas.length > 0 ? (
+          <>
+            <p>
+              Authentic Italian cuisine. 6 creative dishes to choose from. All
+              from our stone oven, all organic, all delicious.
+            </p>
+            <ul className="pizzas">
+              {pizzas.map((pizza, key) => (
+                <Pizza
+                  key={key}
+                  name={pizza.name}
+                  ingredients={pizza.ingredients}
+                  photoName={pizza.photoName}
+                  price={pizza.price}
+                  soldOut={pizza.soldOut}
+                />
+              ))}
+            </ul>
+          </>
+        ) : (
+          <p> We're still working on menu. Please come back later :) </p>
+        )
+        // <p> There is no pizza </p>
+      }
       {/* <Pizza
         name="Pizza Spinaci"
         ingredients="Tomato, mozarella, spinach, and ricotta cheese"
@@ -97,14 +112,18 @@ function Menu() {
   );
 }
 
-function Pizza({ name, ingredients, photoName, price }) {
+function Pizza({ name, ingredients, photoName, price, soldOut }) {
+  // if (soldOut) return null;
   return (
-    <li className="pizza">
+    <li className={`pizza ${soldOut ? 'sold-out' : ""}`}>
       <img src={photoName} alt="" />
       <div className="">
         <h3>{name}</h3>
         <p>{ingredients}</p>
-        <span>{price}</span>
+        {
+          soldOut ? <span>SOLD OUT</span> : <span>{price}</span>
+        }
+        {/* <span>{soldOut ? "SOLD OUT" : price}</span> */}
       </div>
     </li>
   );
@@ -121,14 +140,27 @@ function Footer() {
 
   return (
     <footer className="footer">
-      {isOpen && (
-        <div className="order">
-          <p>We're open until {closeHour}:00. Come visit us or order online</p>
-          <button className="btn"><Order></Order></button>
-        </div>
+      {isOpen ? (
+        <Order closeHour={closeHour} openHour={openHour} />
+      ) : (
+        <p>
+          We're happy to welcome you between {openHour}:00 and {closeHour}:00.
+        </p>
       )}
     </footer>
   );
 }
 
 export default App;
+
+function Order({ closeHour, openHour }) {
+  return (
+    <div className="order">
+      <p>
+        We're open from {openHour}:00 to {closeHour}:00. Come visit us or order
+        online
+      </p>
+      <button className="btn">Order</button>
+    </div>
+  );
+}
